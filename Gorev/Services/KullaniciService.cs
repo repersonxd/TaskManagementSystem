@@ -11,6 +11,7 @@ namespace GorevY.Services
     public class KullaniciService
     {
         private readonly AppDbContext _context;
+        private readonly string logFilePath = @"C:\Users\redpe\source\repos\Gorev\error_log.txt"; // Log dosyasının tam yolu
 
         public KullaniciService(AppDbContext context)
         {
@@ -42,13 +43,13 @@ namespace GorevY.Services
                 {
                     Console.WriteLine($"Hata Mesajı: {innerException.Message}");
                     Console.WriteLine($"Hata Türü: {innerException.GetType()}");
-                    File.AppendAllText("error_log.txt", $"Hata Mesajı: {innerException.Message}\nHata Türü: {innerException.GetType()}\n\n");
+                    File.AppendAllText(logFilePath, $"Hata Mesajı: {innerException.Message}\nHata Türü: {innerException.GetType()}\n\n");
                 }
                 else
                 {
                     Console.WriteLine($"Hata Mesajı: {ex.Message}");
                     Console.WriteLine($"Hata Türü: {ex.GetType()}");
-                    File.AppendAllText("error_log.txt", $"Hata Mesajı: {ex.Message}\nHata Türü: {ex.GetType()}\n\n");
+                    File.AppendAllText(logFilePath, $"Hata Mesajı: {ex.Message}\nHata Türü: {ex.GetType()}\n\n");
                 }
                 throw; // Hatanın tekrar fırlatılması
             }
@@ -69,13 +70,13 @@ namespace GorevY.Services
                 {
                     Console.WriteLine($"Hata Mesajı: {innerException.Message}");
                     Console.WriteLine($"Hata Türü: {innerException.GetType()}");
-                    File.AppendAllText("error_log.txt", $"Hata Mesajı: {innerException.Message}\nHata Türü: {innerException.GetType()}\n\n");
+                    File.AppendAllText(logFilePath, $"Hata Mesajı: {innerException.Message}\nHata Türü: {innerException.GetType()}\n\n");
                 }
                 else
                 {
                     Console.WriteLine($"Hata Mesajı: {ex.Message}");
                     Console.WriteLine($"Hata Türü: {ex.GetType()}");
-                    File.AppendAllText("error_log.txt", $"Hata Mesajı: {ex.Message}\nHata Türü: {ex.GetType()}\n\n");
+                    File.AppendAllText(logFilePath, $"Hata Mesajı: {ex.Message}\nHata Türü: {ex.GetType()}\n\n");
                 }
                 throw; // Hatanın tekrar fırlatılması
             }
@@ -99,13 +100,13 @@ namespace GorevY.Services
                 {
                     Console.WriteLine($"Hata Mesajı: {innerException.Message}");
                     Console.WriteLine($"Hata Türü: {innerException.GetType()}");
-                    File.AppendAllText("error_log.txt", $"Hata Mesajı: {innerException.Message}\nHata Türü: {innerException.GetType()}\n\n");
+                    File.AppendAllText(logFilePath, $"Hata Mesajı: {innerException.Message}\nHata Türü: {innerException.GetType()}\n\n");
                 }
                 else
                 {
                     Console.WriteLine($"Hata Mesajı: {ex.Message}");
                     Console.WriteLine($"Hata Türü: {ex.GetType()}");
-                    File.AppendAllText("error_log.txt", $"Hata Mesajı: {ex.Message}\nHata Türü: {ex.GetType()}\n\n");
+                    File.AppendAllText(logFilePath, $"Hata Mesajı: {ex.Message}\nHata Türü: {ex.GetType()}\n\n");
                 }
                 throw; // Hatanın tekrar fırlatılması
             }

@@ -5,7 +5,7 @@ using GorevY.Models;
 
 namespace GorevY.Middlewares
 {
-    public class ExceptionMiddleware
+    public class ExceptionMiddleware    
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionMiddleware> _logger;

@@ -46,7 +46,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.RequireHttpsMetadata = false; // Geliþtirme ortamýnda geçici olarak kullanabilirsiniz
+    options.RequireHttpsMetadata = false;
     options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -55,7 +55,9 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"]
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidateLifetime = true, // Token süresi dolmuþsa reddet
+        ClockSkew = TimeSpan.Zero // Token süresi doðrulama sýrasýnda esnek olmayacak
     };
 });
 
@@ -74,27 +76,12 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Swagger yapýlandýrmasý
-if (app.Environment.IsDevelopment())
+app.UseMiddleware<ExceptionMiddleware>(); // Özel middleware'i burada kullanýyoruz
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseMiddleware<ExceptionMiddleware>(); // Özel middleware'i burada kullanýyoruz
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
-        c.RoutePrefix = "swagger"; // Ana sayfada deðil, "https://localhost:7257/swagger" yolunda açýlýr
-    });
-}
-if (app.Environment.IsProduction())
-{
-    app.UseWhen(context => context.User.IsInRole("Admin"), appBuilder =>
-    {
-        appBuilder.UseSwagger();
-        appBuilder.UseSwaggerUI(c =>
-        {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
-            c.RoutePrefix = "swagger";
-        });
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+    c.RoutePrefix = "swagger"; // "https://localhost:5260/swagger" yolunda açýlýr
+});
 
 app.Run();
