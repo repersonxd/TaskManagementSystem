@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GorevY.Models;
 using GorevY.Services;
+using GorevY.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace GorevY.Controllers
@@ -18,13 +19,9 @@ namespace GorevY.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Kullanici>>> GetKullanicilar()
+        public async Task<ActionResult<IEnumerable<Kullanici>>> GetKullanicilar()
         {
             var kullanicilar = await _kullaniciService.GetKullanicilar();
-            if (kullanicilar == null || kullanicilar.Count == 0)
-            {
-                return NotFound("Kullanıcılar bulunamadı.");
-            }
             return Ok(kullanicilar);
         }
 
@@ -32,75 +29,65 @@ namespace GorevY.Controllers
         public async Task<ActionResult<Kullanici>> GetKullanici(int id)
         {
             var kullanici = await _kullaniciService.GetKullaniciById(id);
+
             if (kullanici == null)
             {
-                return NotFound($"Kullanıcı ID {id} bulunamadı.");
+                return NotFound(new { Message = "Kullanıcı bulunamadı." });
             }
+
             return Ok(kullanici);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Kullanici>> CreateKullanici([FromBody] Kullanici kullanici)
+        public async Task<ActionResult<Kullanici>> PostKullanici(Kullanici kullanici)
         {
-            if (kullanici == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Kullanıcı nesnesi boş.");
+                return BadRequest(ModelState);
             }
 
-            try
-            {
-                var createdKullanici = await _kullaniciService.CreateKullanici(kullanici);
-                return CreatedAtAction(nameof(GetKullanici), new { id = createdKullanici.Id }, createdKullanici);
-            }
-            catch (System.Exception ex)
-            {
-                return StatusCode(500, $"Sunucu hatası: {ex.Message}");
-            }
+            await _kullaniciService.CreateKullanici(kullanici);
+
+            return CreatedAtAction(nameof(GetKullanici), new { id = kullanici.Id }, kullanici);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateKullanici(int id, [FromBody] Kullanici kullanici)
+        public async Task<IActionResult> PutKullanici(int id, Kullanici kullanici)
         {
             if (id != kullanici.Id)
             {
-                return BadRequest("Kullanıcı ID'leri eşleşmiyor.");
+                return BadRequest(new { Message = "ID uyuşmuyor." });
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
             }
 
             var existingKullanici = await _kullaniciService.GetKullaniciById(id);
             if (existingKullanici == null)
             {
-                return NotFound($"Kullanıcı ID {id} bulunamadı.");
+                return NotFound(new { Message = "Kullanıcı bulunamadı." });
             }
 
-            try
-            {
-                await _kullaniciService.UpdateKullanici(kullanici);
-                return NoContent();
-            }
-            catch (System.Exception ex)
-            {
-                return StatusCode(500, $"Sunucu hatası: {ex.Message}");
-            }
+            await _kullaniciService.UpdateKullanici(kullanici);
+
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteKullanici(int id)
         {
-            var existingKullanici = await _kullaniciService.GetKullaniciById(id);
-            if (existingKullanici == null)
+            var kullanici = await _kullaniciService.GetKullaniciById(id);
+
+            if (kullanici == null)
             {
-                return NotFound($"Kullanıcı ID {id} bulunamadı.");
+                return NotFound(new { Message = "Kullanıcı bulunamadı." });
             }
 
-            try
-            {
-                await _kullaniciService.DeleteKullanici(id);
-                return NoContent();
-            }
-            catch (System.Exception ex)
-            {
-                return StatusCode(500, $"Sunucu hatası: {ex.Message}");
-            }
+            await _kullaniciService.DeleteKullanici(id);
+
+            return NoContent();
         }
     }
 }

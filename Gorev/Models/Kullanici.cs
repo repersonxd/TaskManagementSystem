@@ -1,20 +1,24 @@
-﻿namespace GorevY.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GorevY.Models
 {
     public class Kullanici
     {
+        [Key]
         public int Id { get; set; }
-        public required string KullaniciAdi { get; set; }
-        public required string Email { get; set; }
-        public required string Sifre { get; set; }
-        public ICollection<Gorev> Gorevler { get; set; } = new List<Gorev>();
 
-        public Kullanici() { }
+        [Required(ErrorMessage = "Kullanıcı adı gereklidir.")]
+        [StringLength(50, ErrorMessage = "Kullanıcı adı en fazla 50 karakter olabilir.")]
+        public string KullaniciAdi { get; set; }
 
-        public Kullanici(string kullaniciAdi, string email, string sifre)
-        {
-            KullaniciAdi = kullaniciAdi ?? throw new ArgumentNullException(nameof(kullaniciAdi));
-            Email = email ?? throw new ArgumentNullException(nameof(email));
-            Sifre = sifre ?? throw new ArgumentNullException(nameof(sifre));
-        }
+        [Required(ErrorMessage = "Email gereklidir.")]
+        [EmailAddress(ErrorMessage = "Geçerli bir email adresi girin.")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Şifre gereklidir.")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Şifre en az 6 karakter olmalıdır.")]
+        public string Sifre { get; set; }
+
+        // Diğer özellikler
     }
 }

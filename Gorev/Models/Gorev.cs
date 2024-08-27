@@ -1,26 +1,21 @@
-﻿using GorevY.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class Gorev
+namespace GorevY.Models
 {
-    public int Id { get; set; }
-
-    [Required(ErrorMessage = "Görev başlığı gereklidir.")]
-    public string Baslik { get; set; }
-
-    [Required(ErrorMessage = "Görev açıklaması gereklidir.")]
-    public string Aciklama { get; set; }
-
-    public bool Tamamlandi { get; set; }
-
-    public int KullaniciId { get; set; }
-
-    // Kullanici ile ilişki
-    public Kullanici Kullanici { get; set; }
-
-    public Gorev(string baslik, string aciklama)
+    public class Gorev
     {
-        Baslik = baslik ?? throw new ArgumentNullException(nameof(baslik), "Görev başlığı boş olamaz.");
-        Aciklama = aciklama ?? throw new ArgumentNullException(nameof(aciklama), "Görev açıklaması boş olamaz.");
+        [Key]
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "Görev adı gereklidir.")]
+        [StringLength(100, ErrorMessage = "Görev adı en fazla 100 karakter olabilir.")]
+        public string GorevAdi { get; set; }
+
+        [Required(ErrorMessage = "Görev açıklaması gereklidir.")]
+        public string Aciklama { get; set; }
+
+        public bool Tamamlandi { get; set; }
+
+        // Diğer özellikler
     }
 }

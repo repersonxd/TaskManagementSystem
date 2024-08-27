@@ -5,15 +5,17 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+app.UseMiddleware<ExceptionMiddleware>();
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// CORS ayarlarýný ekle
+// CORS ayarlarýný güncelle
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("https://example.com", "https://anotherexample.com") // Sadece bu domainlerden gelen isteklere izin ver
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
@@ -70,13 +72,13 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Orta katmanlarý ekle
-app.UseCors("AllowAll");
+app.UseCors("AllowSpecificOrigins"); // Yeni CORS politikasýný kullan
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<ExceptionMiddleware>(); // Özel middleware'i burada kullanýyoruz
 app.MapControllers();
 
 // Swagger yapýlandýrmasý
-app.UseMiddleware<ExceptionMiddleware>(); // Özel middleware'i burada kullanýyoruz
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
