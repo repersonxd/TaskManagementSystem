@@ -47,8 +47,15 @@ namespace GorevY.Controllers
                 return BadRequest("Kullanıcı nesnesi boş.");
             }
 
-            var createdKullanici = await _kullaniciService.CreateKullanici(kullanici);
-            return CreatedAtAction(nameof(GetKullanici), new { id = createdKullanici.Id }, createdKullanici);
+            try
+            {
+                var createdKullanici = await _kullaniciService.CreateKullanici(kullanici);
+                return CreatedAtAction(nameof(GetKullanici), new { id = createdKullanici.Id }, createdKullanici);
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(500, $"Sunucu hatası: {ex.Message}");
+            }
         }
 
         [HttpPut("{id}")]
@@ -65,8 +72,15 @@ namespace GorevY.Controllers
                 return NotFound($"Kullanıcı ID {id} bulunamadı.");
             }
 
-            await _kullaniciService.UpdateKullanici(kullanici);
-            return NoContent();
+            try
+            {
+                await _kullaniciService.UpdateKullanici(kullanici);
+                return NoContent();
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(500, $"Sunucu hatası: {ex.Message}");
+            }
         }
 
         [HttpDelete("{id}")]
@@ -78,8 +92,15 @@ namespace GorevY.Controllers
                 return NotFound($"Kullanıcı ID {id} bulunamadı.");
             }
 
-            await _kullaniciService.DeleteKullanici(id);
-            return NoContent();
+            try
+            {
+                await _kullaniciService.DeleteKullanici(id);
+                return NoContent();
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(500, $"Sunucu hatası: {ex.Message}");
+            }
         }
     }
 }

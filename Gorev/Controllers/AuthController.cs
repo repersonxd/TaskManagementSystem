@@ -36,16 +36,16 @@ namespace GorevY.Controllers
 
                 if (kullanici == null)
                 {
-                    return Unauthorized();
+                    return Unauthorized("Kullanıcı adı veya şifre hatalı.");
+                }
+
+                var key = _configuration["Jwt:Key"];
+                if (string.IsNullOrEmpty(key) || key.Length < 32)
+                {
+                    return StatusCode(500, "JWT anahtarı eksik veya yetersiz uzunlukta.");
                 }
 
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = _configuration["Jwt:Key"];
-                if (string.IsNullOrEmpty(key))
-                {
-                    return StatusCode(500, "JWT anahtarı yapılandırılmamış.");
-                }
-
                 var keyBytes = Encoding.ASCII.GetBytes(key);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
@@ -128,16 +128,15 @@ namespace GorevY.Controllers
             }
         }
 
-
         private string GenerateJwtToken(IEnumerable<Claim> claims)
         {
             var key = _configuration["Jwt:Key"];
-            if (string.IsNullOrEmpty(key))
+            if (string.IsNullOrEmpty(key) || key.Length < 32)
             {
-                throw new InvalidOperationException("JWT anahtarı yapılandırılmamış.");
+                throw new InvalidOperationException("JWT anahtarı eksik veya yetersiz uzunlukta.");
             }
 
-            var keyBytes = Encoding.UTF8.GetBytes(key); // Key'in null olmadığından emin olduk
+            var keyBytes = Encoding.UTF8.GetBytes(key);
             var creds = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
@@ -163,9 +162,9 @@ namespace GorevY.Controllers
         private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
             var key = _configuration["Jwt:Key"];
-            if (string.IsNullOrEmpty(key))
+            if (string.IsNullOrEmpty(key) || key.Length < 32)
             {
-                throw new InvalidOperationException("JWT anahtarı yapılandırılmamış.");
+                throw new InvalidOperationException("JWT anahtarı eksik veya yetersiz uzunlukta.");
             }
 
             var tokenValidationParameters = new TokenValidationParameters

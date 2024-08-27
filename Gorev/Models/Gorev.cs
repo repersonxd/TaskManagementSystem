@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GorevY.Models;
+using System.ComponentModel.DataAnnotations;
 
 public class Gorev
 {
@@ -14,20 +15,12 @@ public class Gorev
 
     public int KullaniciId { get; set; }
 
+    // Kullanici ile ilişki
+    public Kullanici Kullanici { get; set; }
+
     public Gorev(string baslik, string aciklama)
     {
-        if (string.IsNullOrEmpty(baslik))
-        {
-            throw new ArgumentNullException(nameof(baslik), "Görev başlığı boş olamaz.");
-        }
-
-        if (string.IsNullOrEmpty(aciklama))
-        {
-            throw new ArgumentNullException(nameof(aciklama), "Görev açıklaması boş olamaz.");
-        }
-
-        Baslik = baslik;
-        Aciklama = aciklama;
-        Tamamlandi = false;
+        Baslik = baslik ?? throw new ArgumentNullException(nameof(baslik), "Görev başlığı boş olamaz.");
+        Aciklama = aciklama ?? throw new ArgumentNullException(nameof(aciklama), "Görev açıklaması boş olamaz.");
     }
 }

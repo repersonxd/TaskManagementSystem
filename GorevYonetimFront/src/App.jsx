@@ -1,5 +1,5 @@
-import "antd/dist/antd.css"; // Ant Design CSS stilleri
-import './App.css'; // Kendi özel stilleriniz
+import 'antd/dist/reset.css';
+import './App.css'; 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { TaskProvider } from "./contexts/TaskContext";
