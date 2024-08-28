@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';  // Axios'u buraya ekleyin
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { TaskProvider } from "./contexts/TaskContext";
 import UserDetails from "./components/UserDetails";

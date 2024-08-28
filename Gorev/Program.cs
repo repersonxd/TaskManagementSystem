@@ -13,7 +13,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // Frontend'in çalýþtýðý portu buraya ekleyin
+        policy.WithOrigins("https://example.com", "https://anotherexample.com") // Sadece bu domainlerden gelen isteklere izin ver
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
@@ -25,9 +25,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         sqlServerOptionsAction: sqlOptions =>
         {
             sqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 5,
-                maxRetryDelay: TimeSpan.FromSeconds(10),
-                errorNumbersToAdd: null);
+                maxRetryCount: 5, // Maksimum 5 kez dene
+                maxRetryDelay: TimeSpan.FromSeconds(10), // 10 saniyelik gecikme ile
+                errorNumbersToAdd: null); // Belirli hata kodlarý ile sýnýrlama yapma
         }));
 
 // JWT ayarlarý
@@ -56,13 +56,14 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
+        ValidateLifetime = true, // Token süresi dolmuþsa reddet
+        ClockSkew = TimeSpan.Zero // Token süresi doðrulama sýrasýnda esnek olmayacak
     };
 });
 
 // Servisleri ekle
 builder.Services.AddScoped<KullaniciService>();
+builder.Services.AddScoped<TaskService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -73,22 +74,19 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // Orta katmanlarý ekle
-app.UseCors("AllowSpecificOrigins");
+app.UseCors("AllowSpecificOrigins"); // Yeni CORS politikasýný kullan
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>(); // Özel middleware'i burada kullanýyoruz
 
 app.MapControllers();
 
 // Swagger yapýlandýrmasý
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "GorevY API V1");
-        c.RoutePrefix = "swagger";
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "GorevY API V1");
+    c.RoutePrefix = "swagger";
+});
 
 app.Run();

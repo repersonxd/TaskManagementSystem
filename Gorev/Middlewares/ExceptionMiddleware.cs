@@ -8,12 +8,12 @@ namespace GorevY.Middlewares
 {
     public class ExceptionMiddleware
     {
-        private readonly RequestDelegate _next;
+        private readonly RequestDelegate _requestDelegate;
         private readonly ILogger<ExceptionMiddleware> _logger;
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+        public ExceptionMiddleware(RequestDelegate requestDelegate, ILogger<ExceptionMiddleware> logger)
         {
-            _next = next;
+            _requestDelegate = requestDelegate;
             _logger = logger;
         }
 
@@ -21,7 +21,7 @@ namespace GorevY.Middlewares
         {
             try
             {
-                await _next(context);
+                await _requestDelegate(context);
             }
             catch (Exception ex)
             {

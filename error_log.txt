@@ -1,0 +1,9 @@
+Hata Mesajı: Cannot insert explicit value for identity column in table 'Kullanicilar' when IDENTITY_INSERT is set to OFF.
+Hata Türü: Microsoft.Data.SqlClient.SqlException
+
+Hata Mesajı: Cannot insert explicit value for identity column in table 'Kullanicilar' when IDENTITY_INSERT is set to OFF.
+Hata Türü: Microsoft.Data.SqlClient.SqlException
+
+Hata Mesajı: Cannot insert explicit value for identity column in table 'Kullanicilar' when IDENTITY_INSERT is set to OFF.
+Hata Türü: Microsoft.Data.SqlClient.SqlException
+

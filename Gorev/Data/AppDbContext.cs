@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using GorevY.Models;
+﻿using GorevY.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GorevY.Data
 {
@@ -9,8 +9,8 @@ namespace GorevY.Data
         {
         }
 
-        public DbSet<Kullanici> Kullanicilar { get; set; } // Mevcut Kullanici DbSet
-        public DbSet<Gorev> Tasks { get; set; } // Tasks DbSet
-        public DbSet<RefreshToken> RefreshTokens { get; set; } // RefreshToken DbSet
+        public DbSet<Kullanici> Kullanicilar { get; set; }
+        public DbSet<Gorev> Gorevler { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }
