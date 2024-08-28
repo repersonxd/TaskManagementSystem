@@ -1,15 +1,39 @@
-
-import { useTasks } from '../contexts/TaskContext';
+import React, { useEffect } from 'react';
 import { List, Button, Spin, message } from 'antd';
+import axios from 'axios';
 
 function GorevListesi() {
-    const { tasks, loading, error, deleteTask, fetchTasks } = useTasks();
+    const [tasks, setTasks] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState(null);
 
-    (() => {
+    const fetchTasks = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.get('http://localhost:7257/api/tasks');
+            setTasks(response.data);
+            setLoading(false);
+        } catch (err) {
+            setError(err.message);
+            setLoading(false);
+        }
+    };
+
+    const deleteTask = async (taskId) => {
+        try {
+            await axios.delete(`http://localhost:7257/api/tasks/${taskId}`);
+            setTasks(tasks.filter(task => task.id !== taskId));
+            message.success('Görev baþarýyla silindi.');
+        } catch (err) {
+            message.error('Görev silinirken bir hata oluþtu.');
+        }
+    };
+
+    useEffect(() => {
         fetchTasks(); // Görevleri al
-    }, [fetchTasks]);
+    }, []);
 
-    (() => {
+    useEffect(() => {
         if (error) {
             message.error('Görevler alýnýrken bir hata oluþtu.');
         }

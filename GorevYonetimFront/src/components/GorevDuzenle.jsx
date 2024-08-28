@@ -1,4 +1,4 @@
-
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTasks } from '../contexts/TaskContext';
 import { Form, Input, Button, message, Spin } from 'antd';
@@ -8,9 +8,9 @@ function GorevDuzenle() {
     const navigate = useNavigate();
     const { tasks, updateTask, loading } = useTasks();
     const [form] = Form.useForm();
-    const [task, setTask] = (null);
+    const [task, setTask] = useState(null);  // useState hook ile state'i baþlatýn
 
-    (() => {
+    useEffect(() => {
         const taskToEdit = tasks.find(t => t.id === id);
         if (taskToEdit) {
             form.setFieldsValue(taskToEdit);
@@ -23,7 +23,7 @@ function GorevDuzenle() {
             await updateTask({ ...task, ...values });
             message.success('Görev baþarýyla güncellendi.');
             navigate('/');
-        } catch  {
+        } catch {
             message.error('Görev güncellenirken bir hata oluþtu.');
         }
     };

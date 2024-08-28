@@ -7,8 +7,6 @@ using System.Text;
 using GorevY.Data;
 using GorevY.Models;
 using GorevY.DTOs;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 namespace GorevY.Controllers
@@ -90,7 +88,7 @@ namespace GorevY.Controllers
                 }
 
                 var principal = GetPrincipalFromExpiredToken(request.Token);
-                var userIdString = principal.Identity?.Name; // null kontrolü
+                var userIdString = principal.Identity?.Name;
                 if (string.IsNullOrEmpty(userIdString))
                 {
                     return BadRequest("Token'dan kullanıcı bilgisi alınamadı.");
@@ -101,22 +99,24 @@ namespace GorevY.Controllers
                     return BadRequest("Geçersiz kullanıcı ID.");
                 }
 
-                var user = await _context.Kullanicilar.FindAsync(userId);
-                if (user == null || !await _context.RefreshTokens.AnyAsync(rt => rt.Token == request.RefreshToken && rt.UserId == userId && !rt.IsRevoked))
+                var savedRefreshToken = await _context.RefreshTokens.SingleOrDefaultAsync(rt => rt.Token == request.RefreshToken && rt.UserId == userId);
+                if (savedRefreshToken == null || savedRefreshToken.IsRevoked || savedRefreshToken.Expiration <= DateTime.UtcNow)
                 {
-                    return BadRequest("Geçersiz token.");
+                    return BadRequest("Geçersiz veya süresi dolmuş refresh token.");
                 }
+
+                savedRefreshToken.IsRevoked = true;
 
                 var newJwtToken = GenerateJwtToken(principal.Claims);
                 var newRefreshToken = GenerateRefreshToken();
 
-                var refreshToken = await _context.RefreshTokens.FirstOrDefaultAsync(rt => rt.Token == request.RefreshToken);
-                if (refreshToken == null)
+                var newRefreshTokenEntry = new RefreshToken
                 {
-                    return BadRequest("Geçersiz refresh token.");
-                }
-                refreshToken.Token = newRefreshToken;
-                refreshToken.Expiration = DateTime.UtcNow.AddDays(7);
+                    Token = newRefreshToken,
+                    Expiration = DateTime.UtcNow.AddDays(7),
+                    UserId = userId
+                };
+                await _context.RefreshTokens.AddAsync(newRefreshTokenEntry);
 
                 await _context.SaveChangesAsync();
 
@@ -173,7 +173,7 @@ namespace GorevY.Controllers
                 ValidateIssuer = false,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-                ValidateLifetime = false // Süresi dolmuş token'ları geçerli kılmak için
+                ValidateLifetime = false
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

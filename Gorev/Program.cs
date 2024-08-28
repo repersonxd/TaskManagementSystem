@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-app.UseMiddleware<ExceptionMiddleware>();
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +13,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("https://example.com", "https://anotherexample.com") // Sadece bu domainlerden gelen isteklere izin ver
+        policy.WithOrigins("http://localhost:5173") // Frontend'in çalýþtýðý portu ekleyin
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
@@ -27,17 +25,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         sqlServerOptionsAction: sqlOptions =>
         {
             sqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 5, // Maksimum 5 kez dene
-                maxRetryDelay: TimeSpan.FromSeconds(10), // 10 saniyelik gecikme ile
-                errorNumbersToAdd: null); // Belirli hata kodlarý ile sýnýrlama yapma
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(10),
+                errorNumbersToAdd: null);
         }));
 
 // JWT ayarlarý
 var key = builder.Configuration["Jwt:Key"];
 
-if (string.IsNullOrEmpty(key))
+if (string.IsNullOrEmpty(key) || key.Length < 32)
 {
-    throw new InvalidOperationException("JWT anahtarý yapýlandýrýlmamýþ.");
+    throw new InvalidOperationException("JWT anahtarý yapýlandýrýlmamýþ veya yetersiz.");
 }
 
 var keyBytes = Encoding.UTF8.GetBytes(key);
@@ -58,8 +56,8 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        ValidateLifetime = true, // Token süresi dolmuþsa reddet
-        ClockSkew = TimeSpan.Zero // Token süresi doðrulama sýrasýnda esnek olmayacak
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
     };
 });
 
@@ -67,23 +65,30 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<KullaniciService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "GorevY API", Version = "v1" });
+});
 
 var app = builder.Build();
 
 // Orta katmanlarý ekle
-app.UseCors("AllowSpecificOrigins"); // Yeni CORS politikasýný kullan
+app.UseCors("AllowSpecificOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<ExceptionMiddleware>(); // Özel middleware'i burada kullanýyoruz
-app.MapControllers();
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Swagger yapýlandýrmasý
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+if (app.Environment.IsDevelopment())
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
-    c.RoutePrefix = "swagger"; // "https://localhost:5260/swagger" yolunda açýlýr
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "GorevY API V1");
+        c.RoutePrefix = "swagger";
+    });
+}
+
+app.MapControllers();
 
 app.Run();

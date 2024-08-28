@@ -1,15 +1,15 @@
-
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Spin, Card, Typography, Button, message } from 'antd';
 import axios from 'axios';
 
 function UserDetails() {
     const { id } = useParams();
-    const [user, setUser] = (null);
-    const [loading, setLoading] = (true);
+    const [user, setUser] = useState(null);  // useState ile state'i başlatın
+    const [loading, setLoading] = useState(true);  // useState ile state'i başlatın
 
-    (() => {
-        axios.get(`http://localhost:5260/api/kullanicilar/${id}`)
+    useEffect(() => {
+        axios.get(`http://localhost:7257/api/kullanicilar/${id}`)
             .then(response => {
                 setUser(response.data);
                 setLoading(false);
