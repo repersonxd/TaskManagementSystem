@@ -13,7 +13,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // Frontend'in çalýþtýðý portu ekleyin
+        policy.WithOrigins("http://localhost:5173") // Frontend'in çalýþtýðý portu buraya ekleyin
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
@@ -78,6 +78,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ExceptionMiddleware>();
 
+app.MapControllers();
+
 // Swagger yapýlandýrmasý
 if (app.Environment.IsDevelopment())
 {
@@ -88,7 +90,5 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = "swagger";
     });
 }
-
-app.MapControllers();
 
 app.Run();

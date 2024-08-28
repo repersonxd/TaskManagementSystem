@@ -1,6 +1,4 @@
-import 'antd/dist/reset.css';
-import './App.css'; 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { TaskProvider } from "./contexts/TaskContext";
 import UserDetails from "./components/UserDetails";
@@ -10,6 +8,25 @@ import GorevDuzenle from "./components/GorevDuzenle";
 import UserProfile from "./components/UserProfile";
 
 function App() {
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get('http://localhost:7257/api/user');
+                setUserData(response.data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
+    if (!userData) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <Router>
             <TaskProvider>
@@ -18,7 +35,11 @@ function App() {
                     <Route path="/" element={<GorevListesi />} />
                     <Route path="/gorev-ekle" element={<GorevEkle />} />
                     <Route path="/gorev-duzenle/:id" element={<GorevDuzenle />} />
-                    <Route path="/user-profile" element={<UserProfile />} />
+                    <Route path="/user-profile" element={<UserProfile
+                        name={userData.name}
+                        surname={userData.surname}
+                        profilePicture={userData.profilePicture}
+                    />} />
                 </Routes>
             </TaskProvider>
         </Router>

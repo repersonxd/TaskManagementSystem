@@ -14,11 +14,10 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5260",
+      "applicationUrl": "http://localhost:7257", // Backend portunu 7257 olarak ayarlıyoruz
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
-  
     },
     "IIS Express": {
       "commandName": "IISExpress",

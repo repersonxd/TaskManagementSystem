@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { List, Button, Spin, message } from 'antd';
 import axios from 'axios';
 
 function GorevListesi() {
-    const [tasks, setTasks] = React.useState([]);
-    const [loading, setLoading] = React.useState(true);
-    const [error, setError] = React.useState(null);
+    const [tasks, setTasks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const fetchTasks = async () => {
         try {
