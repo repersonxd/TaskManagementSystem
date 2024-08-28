@@ -33,7 +33,8 @@ function UserDetails() {
                 <Typography.Paragraph><strong>Email:</strong> {user.email}</Typography.Paragraph>
                 <Button onClick={() => console.log('Edit')} type="primary">Düzenle</Button>
             </Card>
-        </div>
+        </div>npm run dev
+
     );
 }
 

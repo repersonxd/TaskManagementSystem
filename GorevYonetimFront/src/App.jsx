@@ -14,7 +14,7 @@ function App() {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get('http://localhost:7257/api/user');
+                const response = await axios.get('http://localhost:7257/api/Kullanici');
                 setUserData(response.data);
             } catch (error) {
                 console.error('Error fetching user data:', error);

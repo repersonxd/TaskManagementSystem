@@ -13,7 +13,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("https://example.com", "https://anotherexample.com") // Sadece bu domainlerden gelen isteklere izin ver
+        policy.WithOrigins("http://localhost:5173") // Vite'ýn çalýþtýðý portu ekleyin
               .AllowAnyMethod()
               .AllowAnyHeader();
     });

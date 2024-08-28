@@ -19,7 +19,10 @@ namespace GorevY.Controllers
         public async Task<ActionResult<IEnumerable<Kullanici>>> GetKullanicilar()
         {
             var kullanicilar = await _kullaniciService.GetKullanicilar();
-            return Ok(kullanicilar);
+            return new JsonResult(kullanicilar)
+            {
+                ContentType = "application/json; charset=utf-8"
+            };
         }
 
         [HttpGet("{id}")]
@@ -29,10 +32,16 @@ namespace GorevY.Controllers
 
             if (kullanici == null)
             {
-                return NotFound(new { Message = "Kullanıcı bulunamadı." });
+                return NotFound(new JsonResult(new { Message = "Kullanıcı bulunamadı." })
+                {
+                    ContentType = "application/json; charset=utf-8"
+                });
             }
 
-            return Ok(kullanici);
+            return new JsonResult(kullanici)
+            {
+                ContentType = "application/json; charset=utf-8"
+            };
         }
 
         [HttpPost]
@@ -45,7 +54,10 @@ namespace GorevY.Controllers
 
             await _kullaniciService.CreateKullanici(kullanici);
 
-            return CreatedAtAction(nameof(GetKullanici), new { id = kullanici.Id }, kullanici);
+            return CreatedAtAction(nameof(GetKullanici), new { id = kullanici.Id }, new JsonResult(kullanici)
+            {
+                ContentType = "application/json; charset=utf-8"
+            });
         }
 
         [HttpPut("{id}")]
@@ -53,7 +65,10 @@ namespace GorevY.Controllers
         {
             if (id != kullanici.Id)
             {
-                return BadRequest(new { Message = "ID uyuşmuyor." });
+                return BadRequest(new JsonResult(new { Message = "ID uyuşmuyor." })
+                {
+                    ContentType = "application/json; charset=utf-8"
+                });
             }
 
             if (!ModelState.IsValid)
@@ -64,7 +79,10 @@ namespace GorevY.Controllers
             var existingKullanici = await _kullaniciService.GetKullaniciById(id);
             if (existingKullanici == null)
             {
-                return NotFound(new { Message = "Kullanıcı bulunamadı." });
+                return NotFound(new JsonResult(new { Message = "Kullanıcı bulunamadı." })
+                {
+                    ContentType = "application/json; charset=utf-8"
+                });
             }
 
             await _kullaniciService.UpdateKullanici(kullanici);
@@ -79,7 +97,10 @@ namespace GorevY.Controllers
 
             if (kullanici == null)
             {
-                return NotFound(new { Message = "Kullanıcı bulunamadı." });
+                return NotFound(new JsonResult(new { Message = "Kullanıcı bulunamadı." })
+                {
+                    ContentType = "application/json; charset=utf-8"
+                });
             }
 
             await _kullaniciService.DeleteKullanici(id);

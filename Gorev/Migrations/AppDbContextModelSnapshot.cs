@@ -22,7 +22,7 @@ namespace GorevY.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Gorev", b =>
+            modelBuilder.Entity("GorevY.Models.Gorev", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -34,21 +34,17 @@ namespace GorevY.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Baslik")
+                    b.Property<string>("GorevAdi")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("KullaniciId")
-                        .HasColumnType("int");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("Tamamlandi")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("KullaniciId");
-
-                    b.ToTable("Tasks");
+                    b.ToTable("Gorevler", (string)null);
                 });
 
             modelBuilder.Entity("GorevY.Models.Kullanici", b =>
@@ -65,15 +61,17 @@ namespace GorevY.Migrations
 
                     b.Property<string>("KullaniciAdi")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Sifre")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Kullanicilar");
+                    b.ToTable("Kullanicilar", (string)null);
                 });
 
             modelBuilder.Entity("RefreshToken", b =>
@@ -101,18 +99,7 @@ namespace GorevY.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
-                });
-
-            modelBuilder.Entity("Gorev", b =>
-                {
-                    b.HasOne("GorevY.Models.Kullanici", "Kullanici")
-                        .WithMany("Gorevler")
-                        .HasForeignKey("KullaniciId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Kullanici");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("RefreshToken", b =>
@@ -124,11 +111,6 @@ namespace GorevY.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("GorevY.Models.Kullanici", b =>
-                {
-                    b.Navigation("Gorevler");
                 });
 #pragma warning restore 612, 618
         }

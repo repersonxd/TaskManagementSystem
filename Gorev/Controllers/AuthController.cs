@@ -30,7 +30,7 @@ namespace GorevY.Controllers
             try
             {
                 var kullanici = await _context.Kullanicilar
-                    .SingleOrDefaultAsync(u => u.KullaniciAdi == loginDto.KullaniciAdi && u.Sifre == loginDto.Sifre);
+                    .FirstOrDefaultAsync(u => u.KullaniciAdi == loginDto.KullaniciAdi && u.Sifre == loginDto.Sifre);
 
                 if (kullanici == null)
                 {
@@ -77,78 +77,6 @@ namespace GorevY.Controllers
             }
         }
 
-        [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest request)
-        {
-            try
-            {
-                if (request == null || string.IsNullOrEmpty(request.Token) || string.IsNullOrEmpty(request.RefreshToken))
-                {
-                    return BadRequest("Geçersiz istek.");
-                }
-
-                var principal = GetPrincipalFromExpiredToken(request.Token);
-                var userIdString = principal.Identity?.Name;
-                if (string.IsNullOrEmpty(userIdString))
-                {
-                    return BadRequest("Token'dan kullanıcı bilgisi alınamadı.");
-                }
-
-                if (!int.TryParse(userIdString, out var userId))
-                {
-                    return BadRequest("Geçersiz kullanıcı ID.");
-                }
-
-                var savedRefreshToken = await _context.RefreshTokens.SingleOrDefaultAsync(rt => rt.Token == request.RefreshToken && rt.UserId == userId);
-                if (savedRefreshToken == null || savedRefreshToken.IsRevoked || savedRefreshToken.Expiration <= DateTime.UtcNow)
-                {
-                    return BadRequest("Geçersiz veya süresi dolmuş refresh token.");
-                }
-
-                savedRefreshToken.IsRevoked = true;
-
-                var newJwtToken = GenerateJwtToken(principal.Claims);
-                var newRefreshToken = GenerateRefreshToken();
-
-                var newRefreshTokenEntry = new RefreshToken
-                {
-                    Token = newRefreshToken,
-                    Expiration = DateTime.UtcNow.AddDays(7),
-                    UserId = userId
-                };
-                await _context.RefreshTokens.AddAsync(newRefreshTokenEntry);
-
-                await _context.SaveChangesAsync();
-
-                return Ok(new { Token = newJwtToken, RefreshToken = newRefreshToken });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Sunucu hatası: {ex.Message}");
-            }
-        }
-
-        private string GenerateJwtToken(IEnumerable<Claim> claims)
-        {
-            var key = _configuration["Jwt:Key"];
-            if (string.IsNullOrEmpty(key) || key.Length < 32)
-            {
-                throw new InvalidOperationException("JWT anahtarı eksik veya yetersiz uzunlukta.");
-            }
-
-            var keyBytes = Encoding.UTF8.GetBytes(key);
-            var creds = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                _configuration["Jwt:Issuer"],
-                _configuration["Jwt:Audience"],
-                claims,
-                expires: DateTime.Now.AddMinutes(15),
-                signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
         private string GenerateRefreshToken()
         {
             var randomNumber = new byte[32];
@@ -159,32 +87,6 @@ namespace GorevY.Controllers
             }
         }
 
-        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
-        {
-            var key = _configuration["Jwt:Key"];
-            if (string.IsNullOrEmpty(key) || key.Length < 32)
-            {
-                throw new InvalidOperationException("JWT anahtarı eksik veya yetersiz uzunlukta.");
-            }
-
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-                ValidateLifetime = false
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
-
-            if (!(securityToken is JwtSecurityToken jwtSecurityToken) || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-            {
-                throw new SecurityTokenException("Geçersiz token.");
-            }
-
-            return principal;
-        }
+        // Diğer metotlar burada olacak...
     }
 }
