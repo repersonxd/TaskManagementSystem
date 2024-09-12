@@ -1,0 +1,22 @@
+.gorev-listesi {
+    background-color: #1C1A1B;
+    padding: 20px;
+    border-radius: 10px;
+    color: #E2DCDD;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+    max-width: 100%;
+}
+
+.ant-list-item {
+    border-bottom: 1px solid #E2DCDD;
+}
+
+.ant-list-item-meta-title {
+    color: #E2DCDD;
+    font-size: 18px;
+}
+
+.ant-list-item-meta-description {
+    color: #E2DCDD;
+    font-size: 14px;
+}

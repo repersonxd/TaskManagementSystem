@@ -1,0 +1,100 @@
+﻿.kullanici-arama-silme-container {
+    background-color: #1C1A1B;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.7); /* Daha belirgin gölge */
+    transition: transform 0.3s ease;
+}
+
+    .kullanici-arama-silme-container:hover {
+        transform: scale(1.02); /* Hover animasyonu */
+    }
+
+    .kullanici-arama-silme-container h2 {
+        color: #1C1A1B;
+        background-color: #E2DCDD;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 26px;
+        font-weight: bold;
+        box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.5); /* Başlık gölgeleri */
+    }
+
+/* Arama barı stili */
+.kullanici-arama input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #1C1A1B; /* Arama barı arka plan rengi */
+    color: #E2DCDD; /* Arama barı yazı rengi */
+    border: 1px solid #E2DCDD;
+}
+
+    .kullanici-arama input:focus {
+        border-color: #E40046;
+        box-shadow: 0 0 5px rgba(228, 0, 70, 0.5);
+        outline: none;
+    }
+
+/* Arama sonuçları stili */
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #1C1A1B; /* Arka plan rengi */
+    border: 1px solid #E2DCDD; /* Kenarlık rengi */
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+    .search-results li {
+        padding: 10px;
+        cursor: pointer;
+        color: #E2DCDD; /* Yazı rengi */
+        transition: background-color 0.3s ease;
+    }
+
+        .search-results li:hover {
+            background-color: #E40046;
+            color: #E2DCDD; /* Hover renginde değişiklik */
+        }
+
+        .search-results li:active {
+            background-color: #A20032;
+        }
+
+/* Sayfa numaraları için stil */
+.ant-pagination {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.ant-pagination-item {
+    background-color: #1C1A1B; /* Arka plan rengi */
+    border: 1px solid #E2DCDD; /* Kenarlık rengi */
+}
+
+    .ant-pagination-item a {
+        color: #E2DCDD; /* Yazı rengi */
+    }
+
+    .ant-pagination-item:hover a {
+        color: #E40046; /* Hover yazı rengi */
+    }
+
+.ant-pagination-item-active {
+    background-color: #E40046; /* Aktif sayfa arka plan rengi */
+    border-color: #E40046;
+}
+
+    .ant-pagination-item-active a {
+        color: #E2DCDD; /* Aktif sayfa yazı rengi */
+    }

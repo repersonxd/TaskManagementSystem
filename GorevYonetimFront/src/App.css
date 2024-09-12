@@ -1,0 +1,106 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'PollyRounded-Regular', sans-serif;
+    background-color: #1C1A1B !important;
+    color: #E2DCDD;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #E2DCDD;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+button {
+    background-color: #E40046;
+    color: #E2DCDD;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 28px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    font-size: 16px;
+    box-shadow: 0px 4px 8px rgba(228, 0, 70, 0.4);
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+    button:hover {
+        background-color: #1C1A1B;
+        box-shadow: 0px 6px 12px rgba(195, 0, 59, 0.4);
+        transform: translateY(-2px);
+    }
+
+    button:active {
+        background-color: #1C1A1B;
+        box-shadow: none;
+        transform: translateY(0);
+    }
+
+input, textarea {
+    background-color: #1C1A1B;
+    color: #E2DCDD;
+    border: 2px solid #E2DCDD;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 20px;
+    font-family: 'PollyRounded-Regular', sans-serif;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 400px;
+    display: block;
+}
+
+    input:focus, textarea:focus {
+        border-color: #E40046;
+        box-shadow: 0 0 10px rgba(228, 0, 70, 0.7);
+        outline: none;
+        transform: scale(1.02);
+    }
+
+textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+/* Notification Styles */
+.notification {
+    background-color: #1C1A1B; /* Notification background */
+    color: #E2DCDD!important; /* Notification text color */
+    border: 1px solid #E2DCDD;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+    .notification.success {
+        border-color: #E40046;
+    }
+
+    .notification.error {
+        border-color: #E40046;
+        color: #E40046!important; /* Error notification text color */
+    }
+
+    .notification.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .notification.hide {
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }

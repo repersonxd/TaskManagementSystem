@@ -1,0 +1,6 @@
+@Gorev_HostAddress = http://localhost:5260
+
+GET {{Gorev_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,113 @@
+﻿/* Kapsayıcı stil */
+.form-container {
+    background-color: #2A292B;
+    padding: 60px; /* Padding arttırıldı */
+    border-radius: 15px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.7);
+    text-align: center;
+    margin-bottom: 40px; /* Form ile diğer bileşenler arasında boşluk */
+}
+
+    /* Başlık */
+    .form-container h2 {
+        color: #1C1A1B;
+        background-color: #E2DCDD;
+        padding: 25px;
+        border-radius: 8px;
+        margin-bottom: 50px;
+        font-size: 28px;
+        font-weight: bold;
+        box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.5);
+    }
+
+/* Etiketler */
+label {
+    font-size: 18px;
+    color: #E2DCDD;
+    font-weight: bold;
+    margin-bottom: 25px; /* Textboxlar arası boşluk arttırıldı */
+}
+
+/* Input alanları */
+input {
+    padding: 20px;
+    width: 100%;
+    border-radius: 8px;
+    background-color: #E2DCDD;
+    color: #1C1A1B !important;
+    border: 2px solid #E2DCDD;
+    font-size: 16px;
+    margin-bottom: 40px;
+}
+
+    input::placeholder {
+        color: #1C1A1B;
+    }
+
+    input:focus {
+        border-color: #E40046;
+        box-shadow: 0 0 8px rgba(228, 0, 70, 0.5);
+        outline: none;
+        color: #1C1A1B !important;
+    }
+
+/* Şifre göster/gizle butonu */
+.password-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    color: #1C1A1B !important;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #E40046;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+    .toggle-password:hover {
+        color: #1C1A1B !important; /* Hover rengi değiştirildi */
+    }
+
+/* Kayıt Ol düğmesi */
+.register-button {
+    width: 100%;
+    background-color: #E40046;
+    color: #E2DCDD;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 6px 20px rgba(228, 0, 70, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    margin: 10px;
+}
+
+    .register-button:hover {
+        background-color: #1C1A1B !important;
+    }
+
+    .register-button:active {
+        background-color: #1C1A1B !important;
+    }
+
+/* Hata mesajı */
+.register-error {
+    color: #E40046 !important;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
