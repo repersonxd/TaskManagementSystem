@@ -1,19 +1,22 @@
 ﻿using GorevY.Data;
 using GorevY.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace GorevY.Services
 {
     public class TaskService
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<TaskService> _logger;
 
-        public TaskService(AppDbContext context)
+        public TaskService(AppDbContext context, ILogger<TaskService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
-        // Tüm görevleri getir
+        // Get all tasks
         public async Task<List<Gorev>> GetAllTasksAsync()
         {
             try
@@ -22,12 +25,13 @@ namespace GorevY.Services
             }
             catch (Exception ex)
             {
-                // Hata loglama
+                // Log the error
+                _logger.LogError(ex, "Error occurred while fetching tasks.");
                 throw new Exception("Görevler alınırken bir hata oluştu.", ex);
             }
         }
 
-        // ID ile görevi getir
+        // Get task by ID
         public async Task<Gorev?> GetTaskById(int id)
         {
             try
@@ -36,12 +40,13 @@ namespace GorevY.Services
             }
             catch (Exception ex)
             {
-                // Hata loglama
+                // Log the error
+                _logger.LogError(ex, $"Error occurred while fetching task with ID {id}.");
                 throw new Exception($"Görev ID {id} alınırken bir hata oluştu.", ex);
             }
         }
 
-        // Yeni görev oluştur
+        // Create new task
         public async Task CreateTask(Gorev task)
         {
             try
@@ -51,34 +56,29 @@ namespace GorevY.Services
             }
             catch (Exception ex)
             {
-                // Hata loglama
+                // Log the error
+                _logger.LogError(ex, "Error occurred while creating a new task.");
                 throw new Exception("Görev eklenirken bir hata oluştu.", ex);
             }
         }
 
-        // Görevi güncelle
+        // Update task
         public async Task UpdateTask(Gorev task)
         {
             try
             {
-                if (_context.Gorevler.Any(g => g.Id == task.Id))
-                {
-                    _context.Entry(task).State = EntityState.Modified;
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    throw new Exception("Güncellenecek görev bulunamadı.");
-                }
+                _context.Gorevler.Update(task);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                // Hata loglama
-                throw new Exception($"Görev güncellenirken bir hata oluştu. ID: {task.Id}", ex);
+                // Log the error
+                _logger.LogError(ex, "Error occurred while updating the task.");
+                throw new Exception("Görev güncellenirken bir hata oluştu.", ex);
             }
         }
 
-        // Görevi sil
+        // Delete task
         public async Task DeleteTask(int id)
         {
             try
@@ -89,15 +89,12 @@ namespace GorevY.Services
                     _context.Gorevler.Remove(task);
                     await _context.SaveChangesAsync();
                 }
-                else
-                {
-                    throw new Exception("Silinecek görev bulunamadı.");
-                }
             }
             catch (Exception ex)
             {
-                // Hata loglama
-                throw new Exception($"Görev silinirken bir hata oluştu. ID: {id}", ex);
+                // Log the error
+                _logger.LogError(ex, $"Error occurred while deleting the task with ID {id}.");
+                throw new Exception($"Görev ID {id} silinirken bir hata oluştu.", ex);
             }
         }
     }

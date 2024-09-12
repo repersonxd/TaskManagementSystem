@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+ï»¿using Microsoft.AspNetCore.Mvc;
 using GorevY.Services;
 using GorevY.Models;
 using GorevY.DTOs;
@@ -21,7 +21,7 @@ namespace GorevY.Controllers
         {
             if (registerDto.Sifre != registerDto.ConfirmSifre)
             {
-                return BadRequest("Þifreler eþleþmiyor.");
+                return BadRequest("Åžifreler eÅŸleÅŸmiyor.");
             }
 
             var kullanici = new Kullanici
@@ -29,12 +29,12 @@ namespace GorevY.Controllers
                 KullaniciAdi = registerDto.KullaniciAdi,
                 Email = registerDto.Email,
                 Sifre = registerDto.Sifre,
-                Gorevler = new List<Gorev>()  // Boþ bir görev listesi ekleniyor
+                Gorevler = new List<Gorev>()  // BoÅŸ bir gÃ¶rev listesi ekleniyor
             };
 
             await _kullaniciService.CreateKullanici(kullanici);
 
-            return Ok("Kayýt baþarýlý.");
+            return Ok("KayÄ±t baÅŸarÄ±lÄ±.");
         }
 
         [HttpPost("login")]
@@ -43,7 +43,7 @@ namespace GorevY.Controllers
             var kullanici = await _kullaniciService.ValidateUser(loginDto.KullaniciAdi, loginDto.Sifre);
             if (kullanici == null)
             {
-                return Unauthorized("Geçersiz kullanýcý adý veya þifre.");
+                return Unauthorized("GeÃ§ersiz kullanÄ±cÄ± adÄ± veya ÅŸifre.");
             }
 
             var token = _kullaniciService.GenerateJwtToken(kullanici);

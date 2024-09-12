@@ -1,4 +1,4 @@
-namespace GorevY.DTOs
+ï»¿namespace GorevY.DTOs
 {
     public class RegisterDto
     {
@@ -13,13 +13,13 @@ namespace GorevY.DTOs
         public RegisterDto(string kullaniciAdi, string email, string sifre, string confirmSifre)
         {
             if (string.IsNullOrEmpty(kullaniciAdi))
-                throw new ArgumentNullException(nameof(kullaniciAdi), "Kullanýcý adý boþ olamaz.");
+                throw new ArgumentNullException(nameof(kullaniciAdi), "KullanÄ±cÄ± adÄ± boÅŸ olamaz.");
             if (string.IsNullOrEmpty(email))
-                throw new ArgumentNullException(nameof(email), "Email boþ olamaz.");
+                throw new ArgumentNullException(nameof(email), "Email boÅŸ olamaz.");
             if (string.IsNullOrEmpty(sifre))
-                throw new ArgumentNullException(nameof(sifre), "Þifre boþ olamaz.");
+                throw new ArgumentNullException(nameof(sifre), "Åžifre boÅŸ olamaz.");
             if (sifre != confirmSifre)
-                throw new ArgumentException("Þifreler eþleþmiyor.");
+                throw new ArgumentException("Åžifreler eÅŸleÅŸmiyor.");
 
             KullaniciAdi = kullaniciAdi;
             Email = email;

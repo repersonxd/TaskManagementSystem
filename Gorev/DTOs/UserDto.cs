@@ -11,9 +11,12 @@
                 throw new ArgumentNullException(nameof(kullaniciAdi), "Kullanıcı adı boş olamaz.");
             if (string.IsNullOrEmpty(sifre))
                 throw new ArgumentNullException(nameof(sifre), "Şifre boş olamaz.");
+            
+
 
             KullaniciAdi = kullaniciAdi;
             Sifre = sifre;
+           
         }
     }
 }

@@ -10,11 +10,10 @@ const Login = () => {
         sifre: ''
     });
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false); // Yüklenme durumu için state
-    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Bildirim gösterme fonksiyonu
+    // Notification function
     const openNotification = (type, message) => {
         notification[type]({
             message,
@@ -36,35 +35,36 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
-        setLoading(true); // Yüklenme durumunu başlat
+        setLoading(true);
 
         if (!formData.kullaniciAdi || !formData.sifre) {
             setError('Kullanıcı adı ve şifre boş olamaz.');
-            setLoading(false); // Hata olduğunda yüklenme durumunu durdur
+            setLoading(false);
             return;
         }
 
         try {
             const response = await axios.post('http://localhost:5000/api/Kullanici/Login', formData);
+            console.log('Full response from backend:', response.data); // Debugging the full response object
 
-            if (response.status === 200) {
-                const token = response.data.token;
-                if (token) {
-                    // Token'ı sessionStorage'da sakla
-                    sessionStorage.setItem('token', token);
-                    openNotification('success', 'Başarıyla giriş yapıldı!');
-                    navigate('/gorev-anasayfa'); // Giriş başarılıysa yönlendirme
-                } else {
-                    setError('Geçersiz yanıt. Token alınamadı.');
-                }
+            const { token, kullaniciId } = response.data; // Extract token and kullaniciId
+            console.log('Token:', token); // Check if token is correctly received
+            console.log('KullaniciId:', kullaniciId); // Check if kullaniciId is correctly received
+
+            if (token && kullaniciId) {
+                // Store both token and KullaniciId in sessionStorage
+                sessionStorage.setItem('token', token);
+                sessionStorage.setItem('KullaniciId', kullaniciId);
+                openNotification('success', 'Başarıyla giriş yapıldı!');
+                navigate('/gorev-anasayfa'); // Redirect after successful login
             } else {
-                setError('Giriş işlemi başarısız oldu. Lütfen tekrar deneyin.');
+                setError('Geçersiz yanıt. Kullanıcı ID veya Token alınamadı.');
             }
         } catch (err) {
             console.error('API isteğinde bir hata oluştu:', err);
             setError('Giriş işlemi başarısız oldu. Lütfen tekrar deneyin.');
         } finally {
-            setLoading(false); // İşlem bitince yüklenme durumunu durdur
+            setLoading(false);
         }
     };
 
@@ -91,24 +91,15 @@ const Login = () => {
                 </div>
                 <div className="form-group">
                     <label htmlFor="sifre" className="custom-label">Şifre</label>
-                    <div className="password-container">
-                        <input
-                            type={showPassword ? 'text' : 'password'}
-                            id="sifre"
-                            name="sifre"
-                            placeholder="Şifre"
-                            value={formData.sifre}
-                            onChange={handleChange}
-                            required
-                        />
-                        <button
-                            type="button"
-                            className="toggle-password"
-                            onClick={() => setShowPassword(!showPassword)}
-                        >
-                            {showPassword ? 'Gizle' : 'Göster'}
-                        </button>
-                    </div>
+                    <input
+                        type="password"
+                        id="sifre"
+                        name="sifre"
+                        placeholder="Şifre"
+                        value={formData.sifre}
+                        onChange={handleChange}
+                        required
+                    />
                 </div>
                 <div className="button-group">
                     <button type="submit" className="login-button" disabled={loading}>

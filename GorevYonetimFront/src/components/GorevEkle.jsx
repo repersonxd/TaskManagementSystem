@@ -5,9 +5,9 @@ import './GorevEkle.css';
 
 const GorevEkle = ({ onTaskAdded }) => {
     const [loading, setLoading] = useState(false);
-    const [tamamlandi, setTamamlandi] = useState(null);
+    const [tamamlandi, setTamamlandi] = useState('hayir'); // Default to 'hayir'
 
-    // Bildirim fonksiyonu
+    // Notification function
     const openNotification = (type, message) => {
         notification.open({
             message,
@@ -21,13 +21,21 @@ const GorevEkle = ({ onTaskAdded }) => {
     const onFinish = async (values) => {
         setLoading(true);
         try {
+            const kullaniciId = sessionStorage.getItem('KullaniciId'); // Retrieve KullaniciId from session storage
+            if (!kullaniciId) {
+                openNotification('error', 'Kullanıcı kimliği bulunamadı.');
+                setLoading(false);
+                return;
+            }
+
             const data = {
                 GorevAdi: values.GorevAdi,
                 Aciklama: values.Aciklama,
-                Tamamlandi: tamamlandi === 'evet' ? true : false,
+                Tamamlandi: tamamlandi === 'evet' ? true : false, // Ensure Tamamlandi is true/false
+                KullaniciId: kullaniciId, // Include KullaniciId in the request
             };
 
-            console.log("Gönderilen veri:", data); // Verileri kontrol edin
+            console.log("Gönderilen veri:", data); // Debugging the sent data
             const token = sessionStorage.getItem('token');
 
             if (!token) {
@@ -36,7 +44,7 @@ const GorevEkle = ({ onTaskAdded }) => {
                 return;
             }
 
-            // Görev ekleme isteği
+            // Task addition request
             const response = await axios.post('http://localhost:5000/api/tasks', data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -46,7 +54,7 @@ const GorevEkle = ({ onTaskAdded }) => {
 
             if (response.status === 201) {
                 openNotification('success', 'Görev başarıyla eklendi!');
-                onTaskAdded(); // Görev eklendiğinde listeyi güncelle
+                onTaskAdded(); // Refresh the task list when a task is added
             } else {
                 openNotification('error', 'Görev eklenemedi, lütfen tekrar deneyin.');
             }

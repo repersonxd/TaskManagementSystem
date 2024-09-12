@@ -3,7 +3,7 @@ using GorevY.Services;
 using GorevY.Models;
 using System.Security.Claims;
 using GorevY.DTOs;
-using Microsoft.Extensions.Logging;  // Loglama için
+using Microsoft.Extensions.Logging;
 
 namespace GorevY.Controllers
 {
@@ -12,17 +12,17 @@ namespace GorevY.Controllers
     public class TasksController : ControllerBase
     {
         private readonly TaskService _taskService;
-        private readonly KullaniciService _kullaniciService;  // Kullanıcı servisini ekledik
-        private readonly ILogger<TasksController> _logger;  // Logger'ı ekledik
+        private readonly KullaniciService _kullaniciService;
+        private readonly ILogger<TasksController> _logger;
 
         public TasksController(TaskService taskService, KullaniciService kullaniciService, ILogger<TasksController> logger)
         {
             _taskService = taskService;
-            _kullaniciService = kullaniciService; // Kullanıcı servisini yapılandırdık
-            _logger = logger;  // Logger'ı yapılandırma
+            _kullaniciService = kullaniciService;
+            _logger = logger;
         }
 
-        // Tüm görevleri getir
+        // Get all tasks
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Gorev>>> GetAllTasks()
         {
@@ -33,12 +33,12 @@ namespace GorevY.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Görevler alınırken bir hata oluştu.");
-                return StatusCode(500, new { Message = "Görevler alınırken bir hata oluştu. Lütfen tekrar deneyin." });
+                _logger.LogError(ex, "Error retrieving tasks.");
+                return StatusCode(500, new { Message = "An error occurred while retrieving tasks. Please try again." });
             }
         }
 
-        // ID ile görev getir
+        // Get task by ID
         [HttpGet("{id}")]
         public async Task<ActionResult<Gorev>> GetTask(int id)
         {
@@ -47,75 +47,71 @@ namespace GorevY.Controllers
                 var task = await _taskService.GetTaskById(id);
                 if (task == null)
                 {
-                    _logger.LogWarning($"ID {id} ile görev bulunamadı.");
-                    return NotFound(new { Message = "Görev bulunamadı." });
+                    _logger.LogWarning($"Task with ID {id} not found.");
+                    return NotFound(new { Message = "Task not found." });
                 }
 
                 return Ok(task);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Görev ID {id} alınırken bir hata oluştu.");
-                return StatusCode(500, new { Message = "Bir hata oluştu, lütfen tekrar deneyin." });
+                _logger.LogError(ex, $"Error retrieving task with ID {id}.");
+                return StatusCode(500, new { Message = "An error occurred while retrieving the task. Please try again." });
             }
         }
 
-        // Görev ekle
+        // Create task
         [HttpPost]
         public async Task<ActionResult<Gorev>> PostTask([FromBody] GorevDto gorevDto)
         {
             try
             {
-                // DTO geçerliliğini kontrol et
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogWarning("Geçersiz model gönderildi.");
-                    return BadRequest(new { Message = "Geçersiz veri. Lütfen gerekli tüm alanları doldurun.", Errors = ModelState });
+                    _logger.LogWarning("Invalid model submitted.");
+                    return BadRequest(new { Message = "Invalid data. Please fill in all required fields.", Errors = ModelState });
                 }
 
-                // Kullanıcı kimliğini JWT'den al
-                var kullaniciIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                var kullaniciIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.UserData);
 
                 if (kullaniciIdClaim == null)
                 {
-                    _logger.LogWarning("JWT'den kullanıcı kimliği alınamadı.");
-                    return Unauthorized(new { Message = "Kullanıcı doğrulanamadı." });
+                    _logger.LogWarning("User ID could not be retrieved from JWT.");
+                    return Unauthorized(new { Message = "User not authenticated." });
                 }
 
                 if (!int.TryParse(kullaniciIdClaim.Value, out int kullaniciId))
                 {
-                    _logger.LogWarning("Kullanıcı kimliği geçersiz.");
-                    return BadRequest(new { Message = "Geçersiz kullanıcı kimliği." });
+                    _logger.LogWarning("Invalid user ID.");
+                    return BadRequest(new { Message = "Invalid user ID." });
                 }
 
                 var kullanici = await _kullaniciService.GetKullaniciById(kullaniciId);
 
                 if (kullanici == null)
                 {
-                    _logger.LogWarning($"Kullanıcı ID {kullaniciId} bulunamadı.");
-                    return BadRequest(new { Message = "Geçersiz kullanıcı." });
+                    _logger.LogWarning($"User with ID {kullaniciId} not found.");
+                    return BadRequest(new { Message = "Invalid user." });
                 }
 
-                // Görev nesnesini oluştur
                 var gorev = new Gorev
                 {
                     GorevAdi = gorevDto.GorevAdi,
                     Aciklama = gorevDto.Aciklama,
                     Tamamlandi = gorevDto.Tamamlandi,
-                    Kullanici = kullanici,  // Kullanıcıyı set ediyoruz
-                    KullaniciId = kullanici.Id  // Kullanıcı ID'sini set ediyoruz
+                    Kullanici = kullanici,
+                    KullaniciId = kullanici.Id
                 };
 
-                // Görevi kaydet
                 await _taskService.CreateTask(gorev);
-                _logger.LogInformation("Yeni görev başarıyla oluşturuldu.");
+                _logger.LogInformation("New task successfully created.");
 
                 return CreatedAtAction(nameof(GetTask), new { id = gorev.Id }, gorev);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Görev eklenirken bir hata oluştu.");
-                return StatusCode(500, new { Message = "Görev eklenirken bir hata oluştu. Lütfen tekrar deneyin.", Error = ex.Message });
+                _logger.LogError(ex, "Error creating task.");
+                return StatusCode(500, new { Message = "An error occurred while creating the task. Please try again.", Error = ex.Message });
             }
         }
     }

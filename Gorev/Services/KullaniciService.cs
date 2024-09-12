@@ -82,7 +82,7 @@ namespace GorevY.Services
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, kullanici.KullaniciAdi),
-                new Claim(ClaimTypes.NameIdentifier, kullanici.Id.ToString()),
+                new Claim("userId", kullanici.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
