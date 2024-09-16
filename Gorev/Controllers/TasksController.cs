@@ -72,7 +72,7 @@ namespace GorevY.Controllers
                     return BadRequest(new { Message = "Invalid data. Please fill in all required fields.", Errors = ModelState });
                 }
 
-                var kullaniciIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.UserData);
+                var kullaniciIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
                 if (kullaniciIdClaim == null)
                 {

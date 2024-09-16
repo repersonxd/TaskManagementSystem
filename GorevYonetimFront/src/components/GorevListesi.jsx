@@ -34,8 +34,8 @@ const GorevListesi = () => {
                 renderItem={task => (
                     <List.Item>
                         <List.Item.Meta
-                            title={<span className="task-title">{task.title}</span>}
-                            description={<span className="task-description">{task.description}</span>}
+                            title={<span className="task-title">{task.gorevAdi}</span>}
+                            description={<span className="task-description">{task.aciklama}</span>} // Ensure these match the backend properties
                         />
                     </List.Item>
                 )}

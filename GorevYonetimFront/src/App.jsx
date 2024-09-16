@@ -12,34 +12,32 @@ import Register from "./components/Register";
 import GorevAnasayfa from "./components/GorevAnasayfa";
 
 const App = () => {
-    const [userData, setUserData] = useState(null); // Kullanıcı verisi state'i
+    const [userData, setUserData] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/api/Kullanici');
-                if (response.data) {
-                    setUserData(response.data); // Kullanıcı verisini kaydet
-                    setIsLoggedIn(true); // Kullanıcı giriş yapıldı olarak işaretle
-                } else {
-                    setIsLoggedIn(false);
+        const token = sessionStorage.getItem('token');
+        const kullaniciId = sessionStorage.getItem('KullaniciId');
+
+        if (token && kullaniciId) {
+            // If token exists, set user as logged in
+            setIsLoggedIn(true);
+
+            // Optionally, fetch user data with the token
+            axios.get('http://localhost:5000/api/Kullanici', {
+                headers: {
+                    Authorization: `Bearer ${token}`
                 }
-            } catch (error) {
-                console.error('Kullanıcı verileri alınırken bir hata oluştu:', error);
-                setIsLoggedIn(false);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUserData();
+            })
+                .then((response) => {
+                    setUserData(response.data);
+                })
+                .catch((error) => {
+                    console.error("Error fetching user data:", error);
+                    setIsLoggedIn(false);
+                });
+        }
     }, []);
-
-    if (loading) {
-        return <div>Yükleniyor...</div>;
-    }
 
     return (
         <Router>
@@ -58,7 +56,8 @@ const App = () => {
                             name={userData?.kullaniciAdi || 'Unknown'}
                             surname={userData?.soyadi || 'Unknown'}
                             profilePicture={userData?.profilePicture || 'default.png'}
-                        /> : <Navigate to="/login" />}
+                        />
+                        : <Navigate to="/login" />}
                     />
                     <Route path="*" element={<Navigate to={isLoggedIn ? "/gorev-anasayfa" : "/login"} />} />
                 </Routes>

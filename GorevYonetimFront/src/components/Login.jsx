@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { notification } from 'antd';
 import './Login.css';
 
-const Login = () => {
+const Login = ({ setUserData, setIsLoggedIn }) => {
     const [formData, setFormData] = useState({
         kullaniciAdi: '',
         sifre: ''
@@ -13,7 +13,6 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Notification function
     const openNotification = (type, message) => {
         notification[type]({
             message,
@@ -45,18 +44,18 @@ const Login = () => {
 
         try {
             const response = await axios.post('http://localhost:5000/api/Kullanici/Login', formData);
-            console.log('Full response from backend:', response.data); // Debugging the full response object
-
-            const { token, kullaniciId } = response.data; // Extract token and kullaniciId
-            console.log('Token:', token); // Check if token is correctly received
-            console.log('KullaniciId:', kullaniciId); // Check if kullaniciId is correctly received
+            const { token, kullaniciId } = response.data;
 
             if (token && kullaniciId) {
-                // Store both token and KullaniciId in sessionStorage
                 sessionStorage.setItem('token', token);
                 sessionStorage.setItem('KullaniciId', kullaniciId);
+
+                // Update parent states
+                setUserData(response.data);
+                setIsLoggedIn(true);
+
                 openNotification('success', 'Başarıyla giriş yapıldı!');
-                navigate('/gorev-anasayfa'); // Redirect after successful login
+                navigate('/gorev-anasayfa'); // Redirect to the task homepage
             } else {
                 setError('Geçersiz yanıt. Kullanıcı ID veya Token alınamadı.');
             }
